@@ -10,6 +10,8 @@
 #define MRF_H
 
 #include <linux/version.h>
+#include <linux/list.h>
+#include <linux/cdev.h>
 #include <linux/device.h>
 #include <linux/module.h>
 #include <linux/platform_device.h>
@@ -134,12 +136,19 @@
 /* driver private struct */
 
 struct mrf_priv {
-    struct uio_info uio;
+    struct cdev cdev;
     struct pci_dev *pdev;
+
+    //! Pointer to kernel mapped EV* registers
+    void *base;
+    //! Pointer to kernel mapped bus bridge registers (if applicable)
+    void *bridge;
+
     unsigned int mrftype; /* MSB from version register */
     unsigned int irqmode;
     unsigned int intrcount;
-    unsigned int usemie:1;
+
+    u32 irq_active;
 
 #if defined(CONFIG_GENERIC_GPIO) || defined(CONFIG_PARPORT_NOT_PC)
     spinlock_t lock;
@@ -153,7 +162,24 @@ struct mrf_priv {
     const struct ppcable *cable;
     struct parport *port;
 #endif
+
+    wait_queue_head_t file_wait;
 };
+
+struct mrf_file {
+    struct list_head file_entry;
+
+    struct mrf_priv *priv;
+
+    u32 interested,
+        last; // irq_active at last read
+    unsigned abort:1;
+};
+
+extern struct file_operations irqdev_ops;
+
+// IRQ safe
+void mrf_irq_update(struct mrf_priv *priv, u32 active);
 
 #ifdef CONFIG_PARPORT_NOT_PC
 void mrf_pp_setup(struct mrf_priv* dev);

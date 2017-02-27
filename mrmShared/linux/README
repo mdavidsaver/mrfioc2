@@ -14,3 +14,25 @@ allow IOC running from accounts in the softioc group R/W access.
 cat << EOF > /etc/udev/rules.d/99-mrfioc2.rules
 KERNEL=="uio*", ATTR{name}=="mrf-pci", GROUP="softioc", MODE="0660"
 EOF
+
+
+== new interface ==
+
+/dev/mrfev_0000:01:00.0
+
+  read()
+    read32 from EV* device registers
+  write()
+    write32 to EV* device registers
+  mmap()
+    Map registers to user process
+  poll()
+    No-op
+
+/dev/mrfev_irq_0000:01:00.0
+
+  read()
+  write()
+  mmap()
+  poll()
+    no-op
