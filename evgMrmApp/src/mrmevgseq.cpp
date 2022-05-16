@@ -6,6 +6,7 @@
 
 #if defined(__rtems__)
 #  include <rtems.h>
+#  include <rtems/bspIo.h>
 #endif
 
 #include <stdio.h>

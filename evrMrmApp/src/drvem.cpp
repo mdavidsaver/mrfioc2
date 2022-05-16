@@ -46,6 +46,10 @@
 #if defined(__linux__) || defined(_WIN32)
 #  include "devLibPCI.h"
 #endif
+#if defined(__rtems__)
+#  include <rtems.h>
+#  include <rtems/bspIo.h>
+#endif
 
 #include "drvem.h"
 

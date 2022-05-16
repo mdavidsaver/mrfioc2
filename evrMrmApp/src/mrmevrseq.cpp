@@ -14,6 +14,8 @@
 #include "evrRegMap.h"
 
 #if defined(__rtems__)
+#  include <rtems.h>
+#  include <rtems/bspIo.h>
 #  define DEBUG(LVL, ARGS) do{if(SeqManagerDebug>=(LVL)) {printk ARGS ;}}while(0)
 #elif defined(vxWorks)
 #  define DEBUG(LVL, ARGS) do{}while(0)
